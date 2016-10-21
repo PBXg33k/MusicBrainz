@@ -33,6 +33,7 @@
             highLowerBound="70"
             showUncoveredFiles="true"
         />
+        <log type="coverage-clover" target="logs/coverage.xml"/>
     </logging>
 
 </phpunit>
