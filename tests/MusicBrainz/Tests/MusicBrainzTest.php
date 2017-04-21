@@ -2,6 +2,7 @@
 
 namespace MusicBrainz\Tests;
 
+use MusicBrainz\HttpAdapters\AbstractHttpAdapter;
 use MusicBrainz\HttpAdapters\GuzzleFiveAdapter;
 use MusicBrainz\MusicBrainz;
 
@@ -10,15 +11,23 @@ use MusicBrainz\MusicBrainz;
  */
 class MusicBrainzTest extends \PHPUnit_Framework_TestCase
 {
+    const USERNAME = 'testuser';
+    const PASSWORD = 'testpass';
     /**
      * @var \MusicBrainz\MusicBrainz
      */
     protected $brainz;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $httpAdapter;
+
     public function setUp()
     {
-        /** @noinspection PhpParamsInspection */
-        $this->brainz = new MusicBrainz(new GuzzleFiveAdapter($this->createMock('\GuzzleHttp\ClientInterface')));
+        $this->httpAdapter = $httpAdapter = $this->createMock(AbstractHttpAdapter::class);
+
+        $this->brainz = new MusicBrainz($httpAdapter, self::USERNAME, self::PASSWORD );
     }
 
     /**
@@ -40,5 +49,32 @@ class MusicBrainzTest extends \PHPUnit_Framework_TestCase
     public function testIsValidMBID($validation, $mbid)
     {
         $this->assertEquals($validation, $this->brainz->isValidMBID($mbid));
+    }
+
+    public function testHttpOptions()
+    {
+        $applicationName = 'php-musibrainz';
+        $version = '1.0.0';
+        $contactInfo = 'development@oguzhanuysal.eu';
+
+        $this->brainz->setUserAgent($applicationName, $version, $contactInfo);
+
+        $userAgent = $applicationName . '/' . $version . ' (' . $contactInfo . ')';
+
+        $httpOptionsExpect = [
+            'method'        => 'GET',
+            'user-agent'    => $userAgent,
+            'user'          => self::USERNAME,
+            'password'      => self::PASSWORD
+        ];
+
+        $this->assertEquals($httpOptionsExpect, $this->brainz->getHttpOptions());
+        $this->assertEquals($userAgent, $this->brainz->getUserAgent());
+    }
+
+    public function testGetSetters()
+    {
+        $this->assertEquals(self::USERNAME, $this->brainz->getUser());
+        $this->assertEquals(self::PASSWORD, $this->brainz->getPassword());
     }
 }
