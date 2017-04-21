@@ -4,7 +4,7 @@ namespace MusicBrainz\Tests;
 
 use MusicBrainz\HttpAdapters\AbstractHttpAdapter;
 use MusicBrainz\HttpAdapters\GuzzleFiveAdapter;
-use MusicBrainz\MusicBrainz;
+use MusicBrainz;
 
 /**
  * @covers MusicBrainz\MusicBrainz
@@ -27,7 +27,7 @@ class MusicBrainzTest extends \PHPUnit_Framework_TestCase
     {
         $this->httpAdapter = $httpAdapter = $this->createMock(AbstractHttpAdapter::class);
 
-        $this->brainz = new MusicBrainz($httpAdapter, self::USERNAME, self::PASSWORD );
+        $this->brainz = new MusicBrainz\MusicBrainz($httpAdapter, self::USERNAME, self::PASSWORD );
     }
 
     /**
@@ -76,5 +76,14 @@ class MusicBrainzTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(self::USERNAME, $this->brainz->getUser());
         $this->assertEquals(self::PASSWORD, $this->brainz->getPassword());
+    }
+
+    /**
+     * @test
+     * @expectedException MusicBRainz\Exception
+     */
+    public function userAgentVersionCannotContainDash()
+    {
+        $this->brainz->setUserAgent('application', '1.0-beta', 'test');
     }
 }
