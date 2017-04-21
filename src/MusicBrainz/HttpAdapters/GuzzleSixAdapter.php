@@ -1,10 +1,10 @@
 <?php
 namespace MusicBrainz\HttpAdapters;
 
-use GuzzleHttp\ClientInterface;
+use Guzzle\Http\ClientInterface;
 use MusicBrainz\Exception;
 
-class GuzzleFiveAdapter extends AbstractHttpAdapter
+class GuzzleSixAdapter extends AbstractHttpAdapter
 {
     /**
      * @var ClientInterface
@@ -21,7 +21,7 @@ class GuzzleFiveAdapter extends AbstractHttpAdapter
     {
         $this->client = $client;
 
-        if (filter_var($endpoint, FILTER_VALIDATE_URL)) {
+        if(filter_var($endpoint, FILTER_VALIDATE_URL)) {
             $this->endpoint = $endpoint;
         }
     }
@@ -29,17 +29,23 @@ class GuzzleFiveAdapter extends AbstractHttpAdapter
     /**
      * Perform an HTTP request on MusicBrainz
      *
-     * @param  string $path
-     * @param  array $params
-     * @param  array $options
-     * @param  boolean $isAuthRequired
-     * @param  boolean $returnArray
+     * @param string $path
+     * @param array $params
+     * @param array $options
+     * @param bool $isAuthRequired
+     * @param bool $returnArray
+     *
+     * @return array|bool|float|int|string
      *
      * @throws Exception
-     * @return array
      */
-    public function call($path, array $params = array(), array $options = array(), $isAuthRequired = FALSE, $returnArray = FALSE)
-    {
+    public function call(
+        $path,
+        array $params = array(),
+        array $options = array(),
+        $isAuthRequired = false,
+        $returnArray = false
+    ) {
         if ($options['user-agent'] == '') {
             throw new Exception('You must set a valid User Agent before accessing the MusicBrainz API');
         }
@@ -64,18 +70,11 @@ class GuzzleFiveAdapter extends AbstractHttpAdapter
             }
         }
 
-        $response = $this->client->request('GET', $this->endpoint . '/' . $path, $requestOptions);
+        $request = $this->client->createRequest('GET', $this->endpoint . '/' . $path, $requestOptions);
 
         // musicbrainz throttle
         sleep(1);
 
-        $responseBody = $response->getBody()->getContents();
-        $jsonResponse = \GuzzleHttp\json_decode($responseBody);
-
-        if(json_last_error() === JSON_ERROR_NONE) {
-            return $jsonResponse;
-        }
-
-        throw new Exception('Expected JSON response. Got:' . $responseBody );
+        return $this->client->send($request)->json();
     }
 }
