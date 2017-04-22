@@ -75,4 +75,18 @@ abstract class AbstractFilter
 
         return $params;
     }
+
+    protected function toArray($object)
+    {
+        if(is_object($object)) {
+            return get_object_vars($object);
+        }
+
+        if(is_array($object)) {
+            return $object;
+        }
+
+        throw new \Exception('unable to convert to array');
+    }
+
 }

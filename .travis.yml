@@ -6,7 +6,19 @@ php:
   - hhvm
   - nightly
 
-before_script:
-  - composer install
+matrix:
+  fast_finish: true
+  allow_failures:
+    - php: nightly
 
-script: phpunit --coverage-text
+before_script:
+  - composer install --dev
+  - mkdir -p build/logs
+  - chmod +x bin/phpunit
+  - chmod +x bin/coveralls
+
+script:
+  - bin/phpunit --coverage-clover build/logs/clover.xml
+
+after_success:
+  - travis_retry bin/coveralls -v
