@@ -80,6 +80,47 @@ class MusicBrainzTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     */
+    public function willValidateFilter()
+    {
+        $this->assertTrue($this->brainz->validateFilter(['official'], MusicBrainz\MusicBrainz::$validReleaseStatuses));
+    }
+
+    /**
+     * @test
+     * @expectedException MusicBrainz\Exception
+     */
+    public function willThrowExceptionIfFilterValidationFails()
+    {
+        $this->brainz->validateFilter(['Invalid'], MusicBrainz\MusicBrainz::$validReleaseTypes);
+    }
+
+    /**
+     * @test
+     */
+    public function willValidateInclude()
+    {
+        $includes = array(
+            'releases',
+            'recordings',
+            'release-groups',
+            'user-ratings'
+        );
+
+        $this->assertTrue($this->brainz->validateInclude($includes, MusicBrainz\MusicBrainz::$validIncludes['artist']));
+    }
+
+    /**
+     * @test
+     * @expectedException \OutOfBoundsException
+     */
+    public function willThrowOutOfBoundsExceptionIfIncludeValidationFails()
+    {
+        $this->brainz->validateInclude(['out-of-bound'], MusicBrainz\MusicBrainz::$validIncludes['artist']);
+    }
+
+    /**
+     * @test
      * @expectedException MusicBRainz\Exception
      */
     public function userAgentVersionCannotContainDash()

@@ -17,7 +17,7 @@ class MusicBrainz
     /**
      * @var array
      */
-    private static $validIncludes = array(
+    public static $validIncludes = array(
         'artist'        => array(
             "recordings",
             "releases",
@@ -187,7 +187,7 @@ class MusicBrainz
     /**
      * @var array
      */
-    private static $validBrowseIncludes = array(
+    public static $validBrowseIncludes = array(
         'release'       => array(
             "artist-credits",
             "labels",
@@ -235,7 +235,7 @@ class MusicBrainz
     /**
      * @var array
      */
-    private static $validReleaseTypes = array(
+    public static $validReleaseTypes = array(
         "nat",
         "album",
         "single",
@@ -252,7 +252,7 @@ class MusicBrainz
     /**
      * @var array
      */
-    private static $validReleaseStatuses = array(
+    public static $validReleaseStatuses = array(
         "official",
         "promotion",
         "bootleg",
