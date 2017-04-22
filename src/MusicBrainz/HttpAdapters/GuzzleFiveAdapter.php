@@ -73,6 +73,9 @@ class GuzzleFiveAdapter extends AbstractHttpAdapter
         $jsonResponse = \GuzzleHttp\json_decode($responseBody);
 
         if(json_last_error() === JSON_ERROR_NONE) {
+            if($returnArray) {
+                return get_object_vars($jsonResponse);
+            }
             return $jsonResponse;
         }
 

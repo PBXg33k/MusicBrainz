@@ -51,10 +51,12 @@ class ArtistFilter extends AbstractFilter implements FilterInterface
         $artists = array();
         if (isset($response['artist'])) {
             foreach ($response['artist'] as $artist) {
+                $artist = $this->toArray($artist);
                 $artists[] = new Artist($artist, $brainz);
             }
         } elseif (isset($response['artists'])) {
             foreach ($response['artists'] as $artist) {
+                $artist = $this->toArray($artist);
                 $artists[] = new Artist($artist, $brainz);
             }
         }
